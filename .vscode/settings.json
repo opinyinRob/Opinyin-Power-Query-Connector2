@@ -1,0 +1,8 @@
+{
+  "powerquery.sdk.defaultQueryFile": "${workspaceFolder}\\${workspaceFolderBasename}.query.pq",
+  "powerquery.sdk.defaultExtension": "${workspaceFolder}\\bin\\AnyCPU\\Debug\\${workspaceFolderBasename}.mez",
+  "powerquery.general.mode": "SDK",
+  "powerquery.sdk.externals.versionTag": "Custom",
+  "powerquery.sdk.tools.version": "2.152.3",
+  "powerquery.sdk.tools.location": "${workspaceFolder}\\.pqtools\\Microsoft.PowerQuery.SdkTools.2.152.3\\tools"
+}
