@@ -7,7 +7,7 @@
     <MezOutputPath>$(OutputPath)$(MsBuildProjectName).mez</MezOutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <MezContent Include="Opinyin Power Query Connector2.pq" />
+    <MezContent Include="Opinyin Classifications Power Query Connector.pq" />
     <MezContent Include="Opinyin_Power_BI_Connector216.png" />
     <MezContent Include="Opinyin_Power_BI_Connector220.png" />
     <MezContent Include="Opinyin_Power_BI_Connector224.png" />

@@ -20,7 +20,7 @@
       "command": "C:\\Program Files\\dotnet\\dotnet.exe",
       "args": [
         "msbuild",
-        "Opinyin Power Query Connector2.proj",
+        "Opinyin Classifications Power Query Connector.proj",
         "/t:BuildMez",
         "/p:Configuration=Debug",
         "/v:m"
@@ -41,7 +41,7 @@
       "command": "C:\\Program Files\\dotnet\\dotnet.exe",
       "args": [
         "msbuild",
-        "Opinyin Power Query Connector2.proj",
+        "Opinyin Classifications Power Query Connector.proj",
         "/t:Clean",
         "/p:Configuration=Debug",
         "/v:m"

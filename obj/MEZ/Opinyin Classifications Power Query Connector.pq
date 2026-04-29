@@ -1,8 +1,8 @@
 // This file contains your Data Connector logic
-section Opinyin_Power_BI_Connector2;
+section Opinyin_Classifications_Power_Query_Connector;
 
-[DataSource.Kind="Opinyin_Power_BI_Connector2", Publish="Opinyin_Power_BI_Connector2.Publish"]
-shared Opinyin_Power_BI_Connector2.Opinyin = (
+[DataSource.Kind="Opinyin_Classifications_Power_Query_Connector", Publish="Opinyin_Classifications_Power_Query_Connector.Publish"]
+shared Opinyin_Classifications_Power_Query_Connector.Opinyin = (
     optional perPage as nullable number,
     optional page as nullable number,
     optional include as nullable text,
@@ -12,13 +12,14 @@ shared Opinyin_Power_BI_Connector2.Opinyin = (
     optional feedbackTypes as nullable text
 ) =>
     let
-        feedbackTable = Opinyin_Power_BI_Connector2.FeedbackAnalysis(perPage, page, include, sort, startDate, endDate, feedbackTypes),
-        classificationsTable = Opinyin_Power_BI_Connector2.FeedbackClassifications(perPage, page, include, sort, startDate, endDate, feedbackTypes),
-        levelsTable = Opinyin_Power_BI_Connector2.ClassificationLevels(perPage, page, include, sort, startDate, endDate, feedbackTypes),
-        surveyTable = Opinyin_Power_BI_Connector2.SurveyData(perPage, page, include, sort, startDate, endDate, feedbackTypes),
-        passthroughTable = Opinyin_Power_BI_Connector2.PassthroughData(perPage, page, include, sort, startDate, endDate, feedbackTypes),
-        includeDataExistsTable = Opinyin_Power_BI_Connector2.IncludesDataExists(perPage, page, include, sort, startDate, endDate, feedbackTypes),
-        caseIncludeTable = Opinyin_Power_BI_Connector2.CaseIncludes(perPage, page, include, sort, startDate, endDate, feedbackTypes),
+        feedbackTable = Opinyin_Classifications_Power_Query_Connector.FeedbackAnalysis(perPage, page, include, sort, startDate, endDate, feedbackTypes),
+        classificationsTable = Opinyin_Classifications_Power_Query_Connector.FeedbackClassifications(perPage, page, include, sort, startDate, endDate, feedbackTypes),
+        levelsTable = Opinyin_Classifications_Power_Query_Connector.ClassificationLevels(perPage, page, include, sort, startDate, endDate, feedbackTypes),
+        surveyTable = Opinyin_Classifications_Power_Query_Connector.SurveyData(perPage, page, include, sort, startDate, endDate, feedbackTypes),
+        passthroughTable = Opinyin_Classifications_Power_Query_Connector.PassthroughData(perPage, page, include, sort, startDate, endDate, feedbackTypes),        
+        caseTable = Opinyin_Classifications_Power_Query_Connector.Case(perPage, page, include, sort, startDate, endDate, feedbackTypes),
+        leadTable = Opinyin_Classifications_Power_Query_Connector.Lead(perPage, page, include, sort, startDate, endDate, feedbackTypes),
+        referralTable = Opinyin_Classifications_Power_Query_Connector.Referral(perPage, page, include, sort, startDate, endDate, feedbackTypes),
         objects = #table(
             {"Name", "Key", "Data", "ItemKind", "ItemName", "IsLeaf"},
             {
@@ -27,15 +28,17 @@ shared Opinyin_Power_BI_Connector2.Opinyin = (
                 {"Classification Levels", "classification_levels", levelsTable, "Table", "Table", true},
                 {"Survey Data", "survey_data", surveyTable, "Table", "Table", true},
                 {"Passthrough Data", "passthrough_data", passthroughTable, "Table", "Table", true},
-                {"Includes Data Exists", "includes_data_exists", includeDataExistsTable, "Table", "Table", true},
-                {"Case Includes", "case_includes", caseIncludeTable, "Table", "Table", true}
+                {"Case", "case", caseTable, "Table", "Table", true},
+                {"Lead", "lead", leadTable, "Table", "Table", true},
+                {"Referral", "referral", referralTable, "Table", "Table", true}
+
             }
         ),
-        navTable = Opinyin_Power_BI_Connector2.ToNavigationTable(objects, {"Key"}, "Name", "Data", "ItemKind", "ItemName", "IsLeaf")
+        navTable = Opinyin_Classifications_Power_Query_Connector.ToNavigationTable(objects, {"Key"}, "Name", "Data", "ItemKind", "ItemName", "IsLeaf")
     in
         navTable;
 
-Opinyin_Power_BI_Connector2.OpinyinWithQuery = (optional query as nullable record) =>
+Opinyin_Classifications_Power_Query_Connector.OpinyinWithQuery = (optional query as nullable record) =>
     let
         queryRecord = if query = null then [] else query,
         perPageRaw = Record.FieldOrDefault(queryRecord, "per_page", null),
@@ -50,9 +53,9 @@ Opinyin_Power_BI_Connector2.OpinyinWithQuery = (optional query as nullable recor
         includeValue = if includeRaw = null then null else Text.From(includeRaw),
         sortValue = if sortRaw = null then null else Text.From(sortRaw),
         feedbackTypeValue = if feedbackTypeRaw = null then null else Text.From(feedbackTypeRaw),
-        startDateValue = Opinyin_Power_BI_Connector2.NormalizeDate(startDateRaw),
-        endDateValue = Opinyin_Power_BI_Connector2.NormalizeDate(endDateRaw),
-        output = Opinyin_Power_BI_Connector2.Opinyin(
+        startDateValue = Opinyin_Classifications_Power_Query_Connector.NormalizeDate(startDateRaw),
+        endDateValue = Opinyin_Classifications_Power_Query_Connector.NormalizeDate(endDateRaw),
+        output = Opinyin_Classifications_Power_Query_Connector.Opinyin(
             perPageValue,
             pageValue,
             includeValue,
@@ -64,7 +67,7 @@ Opinyin_Power_BI_Connector2.OpinyinWithQuery = (optional query as nullable recor
     in
         output;
 
-Opinyin_Power_BI_Connector2.OpinyinWithParameters = (
+Opinyin_Classifications_Power_Query_Connector.OpinyinWithParameters = (
     startDate as date,
     endDate as date,
     optional feedbackTypes as nullable text,
@@ -74,7 +77,7 @@ Opinyin_Power_BI_Connector2.OpinyinWithParameters = (
     optional page as nullable number
 ) =>
     let
-        output = Opinyin_Power_BI_Connector2.Opinyin(
+        output = Opinyin_Classifications_Power_Query_Connector.Opinyin(
             perPage,
             page,
             include,
@@ -86,7 +89,7 @@ Opinyin_Power_BI_Connector2.OpinyinWithParameters = (
     in
         output;
 
-Opinyin_Power_BI_Connector2.FeedbackAnalysis = (
+Opinyin_Classifications_Power_Query_Connector.FeedbackAnalysis = (
     optional perPage as nullable number,
     optional page as nullable number,
     optional include as nullable text,
@@ -96,7 +99,7 @@ Opinyin_Power_BI_Connector2.FeedbackAnalysis = (
     optional feedbackTypes as nullable text
 ) =>
     let
-        data = Opinyin_Power_BI_Connector2.GetFeedbackAnalysisData(perPage, page, include, sort, startDate, endDate, feedbackTypes),
+        data = Opinyin_Classifications_Power_Query_Connector.GetFeedbackAnalysisData(perPage, page, include, sort, startDate, endDate, feedbackTypes),
         sourceTable = Table.FromList(data, Splitter.SplitByNothing(), {"feedback_analysis"}, null, ExtraValues.Error),
         expanded =
             if Table.IsEmpty(sourceTable)
@@ -106,19 +109,18 @@ Opinyin_Power_BI_Connector2.FeedbackAnalysis = (
                 "feedback_analysis",
                 {
                     "analysis_id", "feedback", "created_at", "clas_score", "given_score", "suggested_response",
-                    "suggested_follow_up_action", "survey_data", "classifications", "passthrough_data", "includes",
-                    "includes_data_exists"
+                    "suggested_follow_up_action", "survey_data", "classifications", "passthrough_data", "includes"
+                    
                 },
                 {
                     "analysis_id", "feedback", "created_at", "clas_score", "given_score", "suggested_response",
-                    "suggested_follow_up_action", "survey_data", "classifications", "passthrough_data", "includes",
-                    "includes_data_exists"
+                    "suggested_follow_up_action", "survey_data", "classifications", "passthrough_data", "includes"
                 }
             )
     in
         expanded;
 
-Opinyin_Power_BI_Connector2.FeedbackClassifications = (
+Opinyin_Classifications_Power_Query_Connector.FeedbackClassifications = (
     optional perPage as nullable number,
     optional page as nullable number,
     optional include as nullable text,
@@ -128,7 +130,7 @@ Opinyin_Power_BI_Connector2.FeedbackClassifications = (
     optional feedbackTypes as nullable text
 ) =>
     let
-        feedbackTable = Opinyin_Power_BI_Connector2.FeedbackAnalysis(perPage, page, include, sort, startDate, endDate, feedbackTypes),
+        feedbackTable = Opinyin_Classifications_Power_Query_Connector.FeedbackAnalysis(perPage, page, include, sort, startDate, endDate, feedbackTypes),
         selected = Table.SelectColumns(feedbackTable, {"analysis_id", "classifications"}, MissingField.UseNull),
         expandedList = Table.ExpandListColumn(selected, "classifications"),
         expandedRecord =
@@ -149,7 +151,7 @@ Opinyin_Power_BI_Connector2.FeedbackClassifications = (
     in
         expandedRecord;
 
-Opinyin_Power_BI_Connector2.ClassificationLevels = (
+Opinyin_Classifications_Power_Query_Connector.ClassificationLevels = (
     optional perPage as nullable number,
     optional page as nullable number,
     optional include as nullable text,
@@ -159,7 +161,7 @@ Opinyin_Power_BI_Connector2.ClassificationLevels = (
     optional feedbackTypes as nullable text
 ) =>
     let
-        classificationsTable = Opinyin_Power_BI_Connector2.FeedbackClassifications(perPage, page, include, sort, startDate, endDate, feedbackTypes),
+        classificationsTable = Opinyin_Classifications_Power_Query_Connector.FeedbackClassifications(perPage, page, include, sort, startDate, endDate, feedbackTypes),
         selected = Table.SelectColumns(classificationsTable, {"analysis_id", "classifcation_id", "classification_levels"}, MissingField.UseNull),
         expandedList = Table.ExpandListColumn(selected, "classification_levels"),
         expandedRecord =
@@ -174,7 +176,7 @@ Opinyin_Power_BI_Connector2.ClassificationLevels = (
     in
         expandedRecord;
 
-Opinyin_Power_BI_Connector2.SurveyData = (
+Opinyin_Classifications_Power_Query_Connector.SurveyData = (
     optional perPage as nullable number,
     optional page as nullable number,
     optional include as nullable text,
@@ -184,7 +186,7 @@ Opinyin_Power_BI_Connector2.SurveyData = (
     optional feedbackTypes as nullable text
 ) =>
     let
-        feedbackTable = Opinyin_Power_BI_Connector2.FeedbackAnalysis(perPage, page, include, sort, startDate, endDate, feedbackTypes),
+        feedbackTable = Opinyin_Classifications_Power_Query_Connector.FeedbackAnalysis(perPage, page, include, sort, startDate, endDate, feedbackTypes),
         selected = Table.SelectColumns(feedbackTable, {"analysis_id", "survey_data"}, MissingField.UseNull),
         onlyRecords = Table.SelectRows(selected, each Value.Is([survey_data], type record)),
         expanded =
@@ -201,7 +203,7 @@ Opinyin_Power_BI_Connector2.SurveyData = (
     in
         expanded;
 
-Opinyin_Power_BI_Connector2.PassthroughData = (
+Opinyin_Classifications_Power_Query_Connector.PassthroughData = (
     optional perPage as nullable number,
     optional page as nullable number,
     optional include as nullable text,
@@ -211,7 +213,7 @@ Opinyin_Power_BI_Connector2.PassthroughData = (
     optional feedbackTypes as nullable text
 ) =>
     let
-        feedbackTable = Opinyin_Power_BI_Connector2.FeedbackAnalysis(perPage, page, include, sort, startDate, endDate, feedbackTypes),
+        feedbackTable = Opinyin_Classifications_Power_Query_Connector.FeedbackAnalysis(perPage, page, include, sort, startDate, endDate, feedbackTypes),
         selected = Table.SelectColumns(feedbackTable, {"analysis_id", "passthrough_data"}, MissingField.UseNull),
         onlyRecords = Table.SelectRows(selected, each Value.Is([passthrough_data], type record)),
         expanded =
@@ -234,32 +236,8 @@ Opinyin_Power_BI_Connector2.PassthroughData = (
     in
         expanded;
 
-Opinyin_Power_BI_Connector2.IncludesDataExists = (
-    optional perPage as nullable number,
-    optional page as nullable number,
-    optional include as nullable text,
-    optional sort as nullable text,
-    optional startDate as nullable date,
-    optional endDate as nullable date,
-    optional feedbackTypes as nullable text
-) =>
-    let
-        feedbackTable = Opinyin_Power_BI_Connector2.FeedbackAnalysis(perPage, page, include, sort, startDate, endDate, feedbackTypes),
-        selected = Table.SelectColumns(feedbackTable, {"analysis_id", "includes_data_exists"}, MissingField.UseNull),
-        onlyRecords = Table.SelectRows(selected, each Value.Is([includes_data_exists], type record)),
-        expanded =
-            if Table.IsEmpty(onlyRecords)
-            then onlyRecords
-            else Table.ExpandRecordColumn(
-                onlyRecords,
-                "includes_data_exists",
-                {"case", "lead", "referral"},
-                {"has_case", "has_lead", "has_referral"}
-            )
-    in
-        expanded;
 
-Opinyin_Power_BI_Connector2.CaseIncludes = (
+Opinyin_Classifications_Power_Query_Connector.Case = (
     optional perPage as nullable number,
     optional page as nullable number,
     optional include as nullable text,
@@ -269,11 +247,11 @@ Opinyin_Power_BI_Connector2.CaseIncludes = (
     optional feedbackTypes as nullable text
 ) =>
     let
-        feedbackTable = Opinyin_Power_BI_Connector2.FeedbackAnalysis(perPage, page, include, sort, startDate, endDate, feedbackTypes),
-        selected = Table.SelectColumns(feedbackTable, {"analysis_id", "includes"}, MissingField.UseNull),
+        feedbackTable = Opinyin_Classifications_Power_Query_Connector.FeedbackAnalysis(perPage, page, include, sort, startDate, endDate, feedbackTypes),
+        selected = Table.SelectColumns(feedbackTable, {"analysis_id", "includes", "feedback"}, MissingField.UseNull),
         withCase = Table.AddColumn(
             selected,
-            "case_include",
+            "case",
             each if Value.Is([includes], type record) then Record.FieldOrDefault([includes], "case", null) else null
         ),
         recordsOnly = Table.SelectRows(withCase, each Value.Is([case_include], type record)),
@@ -282,15 +260,78 @@ Opinyin_Power_BI_Connector2.CaseIncludes = (
             then recordsOnly
             else Table.ExpandRecordColumn(
                 recordsOnly,
-                "case_include",
-                {"analysis_id", "confidence", "suggested_escalation"},
-                {"case_analysis_id", "case_confidence", "suggested_escalation"}
+                "case",
+                {"Analysis ID", "Confidence",  "Feedback", "Case Reason", "Suggested Response"},
+                {"analysis_id", "confidence", "feedback", "reason","suggested_follow_up"}
             ),
         cleaned = Table.RemoveColumns(expanded, {"includes"})
     in
         cleaned;
 
-Opinyin_Power_BI_Connector2.GetFeedbackAnalysisData = (
+
+Opinyin_Classifications_Power_Query_Connector.Lead = (
+    optional perPage as nullable number,
+    optional page as nullable number,
+    optional include as nullable text,
+    optional sort as nullable text,
+    optional startDate as nullable date,
+    optional endDate as nullable date,
+    optional feedbackTypes as nullable text
+) =>
+    let
+        feedbackTable = Opinyin_Classifications_Power_Query_Connector.FeedbackAnalysis(perPage, page, include, sort, startDate, endDate, feedbackTypes),
+        selected = Table.SelectColumns(feedbackTable, {"analysis_id", "includes", "feedback"}, MissingField.UseNull),
+        withLead = Table.AddColumn(
+            selected,
+            "lead",
+            each if Value.Is([includes], type record) then Record.FieldOrDefault([includes], "lead", null) else null
+        ),
+        recordsOnly = Table.SelectRows(withLead, each Value.Is([lead], type record)),
+        expanded =
+            if Table.IsEmpty(recordsOnly)
+            then recordsOnly
+            else Table.ExpandRecordColumn(
+                recordsOnly,
+                "case_include",
+                {"Analysis ID", "Case Confidence",  "Feedback", "Reason", "Suggested Response"},
+                {"analysis_id", "confidence", "feedback", "reason","suggested_escalation"}
+            ),
+        cleaned = Table.RemoveColumns(expanded, {"includes"})
+    in
+        cleaned;
+
+Opinyin_Classifications_Power_Query_Connector.Referral = (
+    optional perPage as nullable number,
+    optional page as nullable number,
+    optional include as nullable text,
+    optional sort as nullable text,
+    optional startDate as nullable date,
+    optional endDate as nullable date,
+    optional feedbackTypes as nullable text
+) =>
+    let
+        feedbackTable = Opinyin_Classifications_Power_Query_Connector.FeedbackAnalysis(perPage, page, include, sort, startDate, endDate, feedbackTypes),
+        selected = Table.SelectColumns(feedbackTable, {"analysis_id", "includes", "feedback"}, MissingField.UseNull),
+        withrefferals = Table.AddColumn(
+            selected,
+            "refferal",
+            each if Value.Is([includes], type record) then Record.FieldOrDefault([includes], "refferal", null) else null
+        ),
+        recordsOnly = Table.SelectRows(withrefferals, each Value.Is([refferals_include], type record)),
+        expanded =
+            if Table.IsEmpty(recordsOnly)
+            then recordsOnly
+            else Table.ExpandRecordColumn(
+                recordsOnly,
+                "refferal",
+                {"Analysis ID", "Confidence",  "Feedback", "Reason", "Suggested Response"},
+                {"analysis_id", "confidence", "feedback", "reason","suggested_follow_up"}
+            ),
+        cleaned = Table.RemoveColumns(expanded, {"includes"})
+    in
+        cleaned;
+
+Opinyin_Classifications_Power_Query_Connector.GetFeedbackAnalysisData = (
     optional perPage as nullable number,
     optional page as nullable number,
     optional include as nullable text,
@@ -304,9 +345,9 @@ Opinyin_Power_BI_Connector2.GetFeedbackAnalysisData = (
         allowedFeedbackTypeValues = {"case", "lead", "referral"},
         allowedSortValues = {"analysis_id", "date"},
         perPageValue = if perPage = null then null else Number.RoundDown(perPage),
-        includeValue = Opinyin_Power_BI_Connector2.ValidateCsvTokens(include, allowedIncludeValues, "include", false),
-        sortValue = Opinyin_Power_BI_Connector2.ValidateCsvTokens(sort, allowedSortValues, "sort", true),
-        feedbackTypeValue = Opinyin_Power_BI_Connector2.ValidateCsvTokens(feedbackTypes, allowedFeedbackTypeValues, "filter[feedback_type]", false),
+        includeValue = Opinyin_Classifications_Power_Query_Connector.ValidateCsvTokens(include, allowedIncludeValues, "include", false),
+        sortValue = Opinyin_Classifications_Power_Query_Connector.ValidateCsvTokens(sort, allowedSortValues, "sort", true),
+        feedbackTypeValue = Opinyin_Classifications_Power_Query_Connector.ValidateCsvTokens(feedbackTypes, allowedFeedbackTypeValues, "filter[feedback_type]", false),
         startDateValue = startDate,
         endDateValue = endDate,
         _dateRangeValidated =
@@ -337,24 +378,24 @@ Opinyin_Power_BI_Connector2.GetFeedbackAnalysisData = (
             if page = null
             then validatedQuery
             else Record.AddField(validatedQuery, "page", Text.From(Number.RoundDown(page))),
-        firstPage = Opinyin_Power_BI_Connector2.GetFeedbackAnalysisPage("https://api2sandbox.opinyin.com/feedback-analysis", queryRecord),
-        allRows = Opinyin_Power_BI_Connector2.GetAllPages(firstPage)
+        firstPage = Opinyin_Classifications_Power_Query_Connector.GetFeedbackAnalysisPage("https://api2sandbox.opinyin.com/feedback-analysis", queryRecord),
+        allRows = Opinyin_Classifications_Power_Query_Connector.GetAllPages(firstPage)
     in
         allRows;
 
-Opinyin_Power_BI_Connector2.GetAllPages = (pageResponse as record) as list =>
+Opinyin_Classifications_Power_Query_Connector.GetAllPages = (pageResponse as record) as list =>
     let
         currentRows = try pageResponse[data] otherwise {},
         nextUrl = try pageResponse[next_page_url] otherwise null,
         nextRows =
             if nextUrl = null
             then {}
-            else @Opinyin_Power_BI_Connector2.GetAllPages(Opinyin_Power_BI_Connector2.GetFeedbackAnalysisPage(nextUrl, null)),
+            else @Opinyin_Classifications_Power_Query_Connector.GetAllPages(Opinyin_Classifications_Power_Query_Connector.GetFeedbackAnalysisPage(nextUrl, null)),
         combined = List.Combine({currentRows, nextRows})
     in
         combined;
 
-Opinyin_Power_BI_Connector2.GetFeedbackAnalysisPage = (pageUrl as text, optional queryRecord as nullable record) as record =>
+Opinyin_Classifications_Power_Query_Connector.GetFeedbackAnalysisPage = (pageUrl as text, optional queryRecord as nullable record) as record =>
     let
         token = Extension.CurrentCredential()[Key],
         requestOptionsBase = [Headers = [Authorization = "Bearer " & token, Accept = "application/json"]],
@@ -363,7 +404,7 @@ Opinyin_Power_BI_Connector2.GetFeedbackAnalysisPage = (pageUrl as text, optional
     in
         source;
 
-Opinyin_Power_BI_Connector2.ValidateCsvTokens = (
+Opinyin_Classifications_Power_Query_Connector.ValidateCsvTokens = (
     rawValue as nullable text,
     allowedValues as list,
     parameterName as text,
@@ -400,7 +441,7 @@ Opinyin_Power_BI_Connector2.ValidateCsvTokens = (
     in
         normalized;
 
-Opinyin_Power_BI_Connector2.NormalizeDate = (rawValue as any) as nullable date =>
+Opinyin_Classifications_Power_Query_Connector.NormalizeDate = (rawValue as any) as nullable date =>
     let
         normalized =
             if rawValue = null
@@ -412,8 +453,8 @@ Opinyin_Power_BI_Connector2.NormalizeDate = (rawValue as any) as nullable date =
         normalized;
 
 // Data Source Kind description
-Opinyin_Power_BI_Connector2 = [
-    TestConnection = (dataSourcePath) => { "Opinyin_Power_BI_Connector2.Opinyin" },
+Opinyin_Classifications_Power_Query_Connector = [
+    TestConnection = (dataSourcePath) => { "Opinyin_Classifications_Power_Query_Connector.Opinyin" },
     Authentication = [
         Key = []
     ],
@@ -421,21 +462,21 @@ Opinyin_Power_BI_Connector2 = [
 ];
 
 // Data Source UI publishing description
-Opinyin_Power_BI_Connector2.Publish = [
+Opinyin_Classifications_Power_Query_Connector.Publish = [
     Beta = false,
     Category = "Other",
     ButtonText = { Extension.LoadString("ButtonTitle"), Extension.LoadString("ButtonHelp") },
     LearnMoreUrl = "https://powerbi.microsoft.com/",
-    SourceImage = Opinyin_Power_BI_Connector2.Icons,
-    SourceTypeImage = Opinyin_Power_BI_Connector2.Icons
+    SourceImage = Opinyin_Classifications_Power_Query_Connector.Icons,
+    SourceTypeImage = Opinyin_Classifications_Power_Query_Connector.Icons
 ];
 
-Opinyin_Power_BI_Connector2.Icons = [
-    Icon16 = { Extension.Contents("Opinyin_Power_BI_Connector216.png"), Extension.Contents("Opinyin_Power_BI_Connector220.png"), Extension.Contents("Opinyin_Power_BI_Connector224.png"), Extension.Contents("Opinyin_Power_BI_Connector232.png") },
-    Icon32 = { Extension.Contents("Opinyin_Power_BI_Connector232.png"), Extension.Contents("Opinyin_Power_BI_Connector240.png"), Extension.Contents("Opinyin_Power_BI_Connector248.png"), Extension.Contents("Opinyin_Power_BI_Connector264.png") }
+Opinyin_Classifications_Power_Query_Connector.Icons = [
+    Icon16 = { Extension.Contents("Opinyin_Classifications_Power_Query_Connector16.png"), Extension.Contents("Opinyin_Classifications_Power_Query_Connector20.png"), Extension.Contents("Opinyin_Classifications_Power_Query_Connector24.png"), Extension.Contents("Opinyin_Classifications_Power_Query_Connector32.png") },
+    Icon32 = { Extension.Contents("Opinyin_Classifications_Power_Query_Connector32.png"), Extension.Contents("Opinyin_Classifications_Power_Query_Connector40.png"), Extension.Contents("Opinyin_Classifications_Power_Query_Connector48.png"), Extension.Contents("Opinyin_Classifications_Power_Query_Connector64.png") }
 ];
 
-Opinyin_Power_BI_Connector2.ToNavigationTable = (
+Opinyin_Classifications_Power_Query_Connector.ToNavigationTable = (
     table as table,
     keyColumns as list,
     nameColumn as text,
