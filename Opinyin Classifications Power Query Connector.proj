@@ -8,14 +8,14 @@
   </PropertyGroup>
   <ItemGroup>
     <MezContent Include="Opinyin Classifications Power Query Connector.pq" />
-    <MezContent Include="Opinyin_Power_BI_Connector216.png" />
-    <MezContent Include="Opinyin_Power_BI_Connector220.png" />
-    <MezContent Include="Opinyin_Power_BI_Connector224.png" />
-    <MezContent Include="Opinyin_Power_BI_Connector232.png" />
-    <MezContent Include="Opinyin_Power_BI_Connector240.png" />
-    <MezContent Include="Opinyin_Power_BI_Connector248.png" />
-    <MezContent Include="Opinyin_Power_BI_Connector264.png" />
-    <MezContent Include="Opinyin_Power_BI_Connector280.png" />
+    <MezContent Include="Opinyin_Classifications_Power_Query_Connector16.png" />
+    <MezContent Include="Opinyin_Classifications_Power_Query_Connector20.png" />
+    <MezContent Include="Opinyin_Classifications_Power_Query_Connector24.png" />
+    <MezContent Include="Opinyin_Classifications_Power_Query_Connector32.png" />
+    <MezContent Include="Opinyin_Classifications_Power_Query_Connector40.png" />
+    <MezContent Include="Opinyin_Classifications_Power_Query_Connector48.png" />
+    <MezContent Include="Opinyin_Classifications_Power_Query_Connector64.png" />
+    <MezContent Include="Opinyin_Classifications_Power_Query_Connector80.png" />
     <MezContent Include="resources.resx" />
   </ItemGroup>
   <Target Name="BuildMez" AfterTargets="Build" Inputs="@(MezContent)" Outputs="$(MezOutputPath)">

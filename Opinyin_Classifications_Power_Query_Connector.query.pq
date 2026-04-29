@@ -6,7 +6,7 @@ let
     pInclude = "case,lead,referral",
     pSort = "analysis_id,date",
     pPerPage = 100,
-    Source = Opinyin_Power_BI_Connector2.Opinyin(
+    Source = Opinyin_Classifications_Power_Query_Connector.Opinyin(
         pPerPage,
         null,
         pInclude,
